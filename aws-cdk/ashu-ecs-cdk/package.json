@@ -1,8 +1,8 @@
 {
-  "name": "ecr",
+  "name": "ashu-ecs-cdk",
   "version": "0.1.0",
   "bin": {
-    "ecr": "bin/ecr.js"
+    "ashu-ecs-cdk": "bin/ashu-ecs-cdk.js"
   },
   "scripts": {
     "build": "tsc",
