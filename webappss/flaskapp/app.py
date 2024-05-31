@@ -1,18 +1,17 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 import mysql.connector
 import os
 import boto3
 import json
 
 app = Flask(__name__)
-
 # AWS Secrets Manager client
 secrets_manager_client = boto3.client('secretsmanager', region_name='us-east-1',
                                      aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
                                      aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'))
 
 def get_mysql_password():
-    secret_name = "/poc/ashu/db_pass"  # Name of your secret in AWS Secrets Manager
+    secret_name = "bmo/ashu/db_pass"  # Name of your secret in AWS Secrets Manager
     secret_key = "ASHU_DB_PASSWORD"  # Key for retrieving the MySQL root password
 
     try:
@@ -24,12 +23,11 @@ def get_mysql_password():
     except Exception as e:
         raise e
 
-
 def get_db_connection():
     connection = mysql.connector.connect(
-        host=os.getenv('MYSQL_HOST', 'database-1.ctoc084eswk5.us-east-1.rds.amazonaws.com'),
-        user=os.getenv('MYSQL_USER', 'admin'),
-        password=get_mysql_password(),  # Retrieve MySQL root password from Secrets Manager
+        host=os.getenv('MYSQL_HOST', 'db'),
+        user=os.getenv('MYSQL_USER', 'root'),
+        password=get_mysql_password(),
         database=os.getenv('MYSQL_DATABASE', 'testdb')
     )
     return connection
