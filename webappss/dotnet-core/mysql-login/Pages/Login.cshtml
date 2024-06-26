@@ -1,0 +1,28 @@
+@page
+@model MyWebApp.Pages.LoginModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<h1>Login</h1>
+
+<form method="post">
+    <div asp-validation-summary="All"></div>
+    <div>
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required />
+    </div>
+    <div>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required />
+    </div>
+    <div>
+        <button type="submit">Login</button>
+    </div>
+</form>
+
+@if (ViewData["Error"] != null)
+{
+    <p style="color: red;">@ViewData["Error"]</p>
+}
+
