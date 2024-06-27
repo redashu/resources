@@ -1,0 +1,27 @@
+volumes:
+  ashuvol1: 
+services:
+  ashudb:
+    image: ashudb:mysql5.7v1
+    build:
+      context: .
+      dockerfile: mysql.dockerfile
+    container_name: ashudbc1 
+    environment:
+      MYSQL_ROOT_PASSWORD: Redhat@123
+      MYSQL_DATABASE: UserDB
+    volumes:
+      - ashuvol1:/var/lib/mysql
+  ashu-web-ui:
+    depends_on:
+      - ashudb
+    image: dotnet-sdk7:appAMD64v2
+    build: . 
+    container_name: ashudotnet-c1
+    environment:
+      DB_SERVER: ashudb
+      DB_DATABASE: UserDB
+      DB_USER: root 
+      DB_PASSWORD: Redhat@123
+    ports:
+      - 5009:5001 
