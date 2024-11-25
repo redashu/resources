@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Dashboard - Training Management Portal</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script> <!-- Include SweetAlert2 for popups -->
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand" href="/">Training Portal</a>
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/about">About</a>
+          </li>
+          {% if 'loggedin' in session %}
+            <li class="nav-item">
+              <a class="nav-link" href="/dashboard">Dashboard</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/logout">Logout</a>
+            </li>
+          {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="/login">Login</a>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+    </nav>
+    <div class="container mt-5">
+      <h1 class="text-center">Dashboard</h1>
+      <p class="text-center">Welcome to your dashboard, {{ username }}!</p>
+      <canvas id="myChart" width="400" height="200"></canvas>
+      <script>
+        fetch('/chart-data')
+          .then(response => response.json())
+          .then(data => {
+            var ctx = document.getElementById('myChart').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: data,
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+          });
+      </script>
+      <h2 class="mt-5">Add New Training</h2>
+      <form action="/add_training" method="post" class="mt-4">
+        <div class="form-group">
+          <label for="training_name">Training Name:</label>
+          <input type="text" class="form-control" id="training_name" name="training_name" required>
+        </div>
+        <div class="form-group">
+          <label for="technology">Technology:</label>
+          <input type="text" class="form-control" id="technology" name="technology" required>
+        </div>
+        <div class="form-group">
+          <label for="start_date">Start Date:</label>
+          <input type="date" class="form-control" id="start_date" name="start_date" required>
+        </div>
+        <div class="form-group">
+          <label for="end_date">End Date:</label>
+          <input type="date" class="form-control" id="end_date" name="end_date" required>
+        </div>
+        <div class="form-group">
+          <label for="vendor">Vendor:</label>
+          <input type="text" class="form-control" id="vendor" name="vendor" required>
+        </div>
+        <div class="form-group">
+          <label for="company_name">Company Name:</label>
+          <input type="text" class="form-control" id="company_name" name="company_name" required>
+        </div>
+        <div class="form-group">
+          <label for="remarks">Remarks:</label>
+          <textarea class="form-control" id="remarks" name="remarks"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="labs_used">Labs Used:</label>
+          <input type="text" class="form-control" id="labs_used" name="labs_used" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Add Training</button>
+      </form>
+    </div>
+    <!-- <script>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            Swal.fire({
+              title: category == 'success' ? 'Success' : 'Error',
+              text: message,
+              icon: category,
+              confirmButtonText: 'OK'
+            });
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+    </script> -->
+
+    <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          Swal.fire({
+            title: '{{ "Success" if category == "success" else "Error" }}',
+            text: '{{ message }}',
+            icon: '{{ category }}',
+            confirmButtonText: 'OK'
+          });
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  });
+</script>
+  </body>
+</html>

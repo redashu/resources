@@ -42,6 +42,7 @@ def login():
 @app.route('/dashboard')
 def dashboard():
     if 'loggedin' in session:
+        print(session.get('_flashes'))  # Debug print statement
         return render_template('dashboard.html', username=session['username'])
     else:
         flash('Please login to access this page.', 'danger')
@@ -83,6 +84,35 @@ def chart_data():
         }]
     }
     return jsonify(data)
+
+# adding training database 
+@app.route('/add_training', methods=['POST'])
+def add_training():
+    if 'loggedin' in session:
+        training_name = request.form['training_name']
+        technology = request.form['technology']
+        start_date = request.form['start_date']
+        end_date = request.form['end_date']
+        vendor = request.form['vendor']
+        company_name = request.form['company_name']
+        remarks = request.form['remarks']
+        labs_used = request.form['labs_used']
+        
+        try:
+            cursor = mysql.connection.cursor()
+            cursor.execute('INSERT INTO training_details (training_name, technology, start_date, end_date, vendor, company_name, remarks, labs_used) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)', 
+                           (training_name, technology, start_date, end_date, vendor, company_name, remarks, labs_used))
+            mysql.connection.commit()
+            cursor.close()
+            flash('Training added successfully!', 'success')
+        except Exception as e:
+            flash('Failed to add training. Please try again.', 'danger')
+        
+        return redirect(url_for('dashboard'))
+    else:
+        flash('Please login to access this page.', 'danger')
+        return redirect(url_for('login'))
+
 
 if __name__ == '__main__':
     app.run(debug=True,port=8081,host='0.0.0.0')
