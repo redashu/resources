@@ -86,33 +86,28 @@ def chart_data():
     return jsonify(data)
 
 # adding training database 
-@app.route('/add_training', methods=['POST'])
-def add_training():
+@app.route('/add_training_page')
+def add_training_page():
     if 'loggedin' in session:
-        training_name = request.form['training_name']
-        technology = request.form['technology']
-        start_date = request.form['start_date']
-        end_date = request.form['end_date']
-        vendor = request.form['vendor']
-        company_name = request.form['company_name']
-        remarks = request.form['remarks']
-        labs_used = request.form['labs_used']
-        
-        try:
-            cursor = mysql.connection.cursor()
-            cursor.execute('INSERT INTO training_details (training_name, technology, start_date, end_date, vendor, company_name, remarks, labs_used) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)', 
-                           (training_name, technology, start_date, end_date, vendor, company_name, remarks, labs_used))
-            mysql.connection.commit()
-            cursor.close()
-            flash('Training added successfully!', 'success')
-        except Exception as e:
-            flash('Failed to add training. Please try again.', 'danger')
-        
-        return redirect(url_for('dashboard'))
+        return render_template('add_training.html')
     else:
         flash('Please login to access this page.', 'danger')
         return redirect(url_for('login'))
 
+@app.route('/search_data', methods=['GET', 'POST'])
+def search_data():
+    if 'loggedin' in session:
+        if request.method == 'POST':
+            search_query = request.form['search_query']
+            cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+            cursor.execute('SELECT * FROM training_details WHERE training_name LIKE %s OR technology LIKE %s OR vendor LIKE %s OR company_name LIKE %s', 
+                           ('%' + search_query + '%', '%' + search_query + '%', '%' + search_query + '%', '%' + search_query + '%'))
+            results = cursor.fetchall()
+            return render_template('search_data.html', results=results, search_query=search_query)
+        return render_template('search_data.html')
+    else:
+        flash('Please login to access this page.', 'danger')
+        return redirect(url_for('login'))
 
 if __name__ == '__main__':
     app.run(debug=True,port=8081,host='0.0.0.0')

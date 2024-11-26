@@ -2,9 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Dashboard - Training Management Portal</title>
+    <title>Add Training - Training Management Portal</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script> <!-- Include SweetAlert2 for popups -->
     <style>
       .form-control {
@@ -16,25 +15,18 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <div class="collapse navbar-collapse">
         <ul class="navbar-nav mr-auto">
-          {% if 'loggedin' in session %}
-            <li class="nav-item">
-              <a class="nav-link" href="#addTrainingSection">Add Training</a> <!-- New Add Training link -->
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/logout">Logout</a>
-            </li>
-          {% endif %}
+          <li class="nav-item">
+            <a class="nav-link" href="/dashboard">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/logout">Logout</a>
+          </li>
         </ul>
       </div>
     </nav>
 
     <div class="container mt-5">
-      <h1 class="text-center">Dashboard</h1>
-      <p class="text-center">Welcome to your dashboard, {{ username }}!</p>
-
-      <canvas id="myChart" width="400" height="200"></canvas>
-
-      <h2 id="addTrainingSection" class="mt-5">Add New Training</h2> <!-- Add id for section -->
+      <h1 class="text-center">Add New Training</h1>
       <form action="/add_training" method="post" class="mt-4">
         <div class="row">
             <div class="col-6 form-group">
@@ -97,23 +89,6 @@
             {% endfor %}
           {% endif %}
         {% endwith %}
-
-        fetch('/chart-data')
-          .then(response => response.json())
-          .then(data => {
-            var ctx = document.getElementById('myChart').getContext('2d');
-            var myChart = new Chart(ctx, {
-                type: 'bar',
-                data: data,
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-          });
       });
     </script>
   </body>

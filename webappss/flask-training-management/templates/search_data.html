@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Search Data - Training Management Portal</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script> <!-- Include SweetAlert2 for popups -->
+    <style>
+      .form-control {
+        max-width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/dashboard">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/logout">Logout</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="container mt-5">
+      <h1 class="text-center">Search Data</h1>
+      <form action="/search_data" method="post" class="mt-4">
+        <div class="form-group">
+          <label for="search_query">Search:</label>
+          <input type="text" class="form-control" id="search_query" name="search_query" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Search</button>
+      </form>
+
+      {% if results %}
+        <h2 class="mt-5">Search Results for "{{ search_query }}"</h2>
+        <table class="table table-striped mt-3">
+          <thead>
+            <tr>
+              <th>Training Name</th>
+              <th>Technology</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Vendor</th>
+              <th>Company Name</th>
+              <th>Remarks</th>
+              <th>Labs Used</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for result in results %}
+              <tr>
+                <td>{{ result.training_name }}</td>
+                <td>{{ result.technology }}</td>
+                <td>{{ result.start_date }}</td>
+                <td>{{ result.end_date }}</td>
+                <td>{{ result.vendor }}</td>
+                <td>{{ result.company_name }}</td>
+                <td>{{ result.remarks }}</td>
+                <td>{{ result.labs_used }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% endif %}
+    </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              Swal.fire({
+                title: '{{ "Success" if category == "success" else "Error" }}',
+                text: '{{ message }}',
+                icon: '{{ category }}',
+                confirmButtonText: 'OK'
+              });
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+      });
+    </script>
+  </body>
+</html>
