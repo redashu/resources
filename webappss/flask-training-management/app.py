@@ -109,5 +109,41 @@ def search_data():
         flash('Please login to access this page.', 'danger')
         return redirect(url_for('login'))
 
+@app.route('/add_training', methods=['GET', 'POST'])
+def add_training():
+    if 'loggedin' in session:
+        if request.method == 'POST':
+            # Retrieve form data
+            training_name = request.form['training_name']
+            technology = request.form['technology']
+            start_date = request.form['start_date']
+            end_date = request.form['end_date']
+            vendor = request.form['vendor']
+            company_name = request.form['company_name']
+            remarks = request.form.get('remarks', '')
+            labs_used = request.form.get('labs_used', '')
+
+            # Insert data into the training_details table
+            cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+            try:
+                cursor.execute("""
+                    INSERT INTO training_details (training_name, technology, date, vendor, company_name, remarks, labs_used)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)
+                """, (training_name, technology, start_date, vendor, company_name, remarks, labs_used))
+                mysql.connection.commit()
+                flash('Training added successfully!', 'success')
+            except Exception as e:
+                flash(f'Error adding training: {e}', 'danger')
+            finally:
+                cursor.close()
+
+            return redirect(url_for('add_training_page'))
+        else:
+            return redirect(url_for('add_training_page'))
+    else:
+        flash('Please login to access this page.', 'danger')
+        return redirect(url_for('login'))
+
+
 if __name__ == '__main__':
     app.run(debug=True,port=8081,host='0.0.0.0')
