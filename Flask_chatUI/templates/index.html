@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    {% if error %}
+    <p style="color: red;">{{ error }}</p>
+    {% endif %}
+    <img src="{{ url_for('static', filename='mm4ka3.jpeg') }}" alt="Mic Icon" height="645px" width="1290px">
+    <div class="a"><img src="{{ url_for('static', filename='mm4ka2.jpg') }}" alt="Mic Icon" height="540px" width="595px"></div>
+    <div class="b"></div>
+    <div class="c"></div>
+    <div class="d"></div>
+    <p class="e">ChatApp</p>
+    <div class="j">Welcome Page</div>
+    <div class="k">Sign in to <br>continue access</div>
+
+    <form action="/" method="POST">
+        <div class="form-title">Log In</div>
+        <div class="input-group">
+            <label for="username">UserName</label>
+            <input id="username" type="input" name="username" placeholder="Enter your name">
+        </div>
+        
+        <div class="input-group">
+            <label for="password">Password</label>
+            <input id="password" type="password" name="password" placeholder="Enter your password">
+        </div>
+        <button type="submit" id="submit" class="continue-btn">CONTINUE</button>
+    </form>
+</body>
+
+</html>
