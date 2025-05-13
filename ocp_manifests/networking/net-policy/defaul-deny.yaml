@@ -1,0 +1,11 @@
+# default-deny.yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny
+  namespace: netpol-demo
+spec:
+  podSelector: {}  # Applies to ALL pods
+  policyTypes:
+    - Ingress
+    - Egress  # generally don't prefer to use this

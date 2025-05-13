@@ -1,0 +1,79 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mypod
+spec:
+  affinity:
+    nodeAffinity:
+      # HARD REQUIREMENTS (must be satisfied)
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          # 1. Positive matching
+          - key: disktype
+            operator: In
+            values: [ssd]
+          # 2. Negative matching
+          - key: disktype
+            operator: NotIn
+            values: [hdd, hddisk]
+          # 3. Existence check
+          - key: disktype
+            operator: Exists
+          # 4. Non-existence check
+          - key: legacy-disk
+            operator: DoesNotExist
+
+      # SOFT PREFERENCES (weighted)
+      preferredDuringSchedulingIgnoredDuringExecution:
+      # Positive preference (weight: 1-100)
+      - weight: 80
+        preference:
+          matchExpressions:
+          - key: disktype
+            operator: In
+            values: [ssd, nvme]
+      # Negative preference
+      - weight: 50
+        preference:
+          matchExpressions:
+          - key: disktype
+            operator: NotIn
+            values: [hdd]
+      # Existence preference
+      - weight: 30
+        preference:
+          matchExpressions:
+          - key: ssd-version
+            operator: Exists
+      # Non-existence preference
+      - weight: 20
+        preference:
+          matchExpressions:
+          - key: spinning-disk
+            operator: DoesNotExist
+
+    # ANTI-AFFINITY RULES
+    podAntiAffinity:
+      # Hard anti-affinity (must not coexist)
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: app
+            operator: In
+            values: [database]
+        topologyKey: kubernetes.io/hostname
+      # Soft anti-affinity (prefer not to coexist)
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+            - key: disktype
+              operator: In
+              values: [ssd]
+          topologyKey: topology.kubernetes.io/zone
+
+  containers:
+  - name: mycontainer
+    image: myimage

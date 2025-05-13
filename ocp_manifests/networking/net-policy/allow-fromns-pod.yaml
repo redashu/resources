@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-web-ingress
+spec:
+  podSelector:
+    matchLabels:
+      run: web  # Targets the "web" pod
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: allowed-namespace  # Replace with the name of the allowed namespace
+          podSelector:
+            matchLabels:
+              app: specific-pod  # Replace with the label of the specific pod
+      ports:
+        - protocol: TCP
+          port: 80  # HTTP port
