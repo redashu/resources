@@ -1,0 +1,15 @@
+apiVersion: cdi.kubevirt.io/v1beta1
+kind: DataVolume
+metadata:
+  name: cirros-dv
+  namespace: default
+spec:
+  source:
+    http:
+      url: "https://download.cirros-cloud.net/0.6.1/cirros-0.6.1-x86_64-disk.img"
+  pvc:
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 2Gi
