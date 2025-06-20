@@ -1,0 +1,26 @@
+# testvm.yaml
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  name: testvm
+  namespace: default
+spec:
+  running: false
+  template:
+    metadata:
+      labels:
+        kubevirt.io/domain: testvm
+    spec:
+      domain:
+        devices:
+          disks:
+            - name: rootdisk
+              disk:
+                bus: virtio
+        resources:
+          requests:
+            memory: 512Mi
+      volumes:
+        - name: rootdisk
+          dataVolume:
+            name: cirros-dv
