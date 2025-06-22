@@ -1,0 +1,25 @@
+apiVersion: kubevirt.io/v1
+kind: VirtualMachineInstance
+metadata:
+  name: my-direct-vmi  # Ephemeral VM (deleted if stopped)
+spec:
+  domain:
+    devices:
+      disks:
+      - name: rootdisk
+        disk: {}  # Attaches as a virtio disk
+      - name: cloudinitdisk
+        disk: {}  # For cloud-init (optional)
+    resources:
+      requests:
+        memory: 2Gi
+        cpu: 1
+  volumes:
+  - name: rootdisk
+    containerDisk:
+      image: quay.io/containerdisks/fedora:latest  # Ephemeral disk (runs in memory)
+  - name: cloudinitdisk
+    cloudInitNoCloud:
+      userData: |
+        password: fedora
+        chpasswd: { expire: False }
