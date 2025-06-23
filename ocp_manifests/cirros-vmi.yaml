@@ -1,0 +1,31 @@
+apiVersion: kubevirt.io/v1
+kind: VirtualMachineInstance
+metadata:
+  name: cirros-vm
+spec:
+  domain:
+    devices:
+      disks:
+      - name: rootdisk
+        disk: {}
+      - name: cloudinitdisk
+        disk: {}
+    resources:
+      requests:
+        memory: 256Mi  # Cirros is very lightweight
+        cpu: 1
+  volumes:
+  - name: rootdisk
+    containerDisk:
+      image: kubevirt/cirros-container-disk-demo:latest  # Official lightweight Cirros (50MB)
+  - name: cloudinitdisk
+    cloudInitNoCloud:
+      userData: |
+        #cloud-config
+        user: cirros
+        password: gocubsgo
+        chpasswd: { expire: False }
+        ssh_pwauth: True
+        runcmd:
+          - sed -i 's/^#PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config
+          - /usr/sbin/sshd
