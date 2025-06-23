@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: alpine-root
+spec:
+  securityContext:
+    runAsUser: 0  # Run as root (UID 0)
+    runAsGroup: 0  # Run as root group (GID 0)
+    fsGroup: 0     # Set filesystem group to root
+  containers:
+  - name: alpine
+    image: alpine:latest
+    command: ["sleep", "infinity"]
+    securityContext:
+      allowPrivilegeEscalation: true  # Optional: Allow privilege escalation
+      capabilities:
+        add: ["NET_ADMIN", "SYS_ADMIN"]  # Optional: Add capabilities if needed
