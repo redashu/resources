@@ -19,10 +19,10 @@ body {
     display: flex;
     min-height: 100vh;
     overflow: hidden;
-    background: #0d0d1a;
+    background: #0a0a14;
 }
 
-/* ── LEFT: visual panel ── */
+/* ── LEFT: AI visual panel ── */
 .bg-visual {
     flex: 1;
     position: relative;
@@ -30,29 +30,29 @@ body {
     align-items: flex-end;
     padding: 3rem;
     overflow: hidden;
+    background: linear-gradient(135deg, #0a0a14 0%, #120820 50%, #0d0d1a 100%);
 }
 
-.bg-img {
+/* Neural network canvas fills the panel */
+#ai-canvas {
     position: absolute;
     inset: 0;
-}
-
-.bg-img img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
     display: block;
 }
 
-.bg-overlay {
+/* Subtle radial glow behind brand block */
+.bg-visual::after {
+    content: '';
     position: absolute;
-    inset: 0;
-    background: linear-gradient(
-        135deg,
-        rgba(13,13,26,0.5) 0%,
-        rgba(247,71,129,0.15) 50%,
-        rgba(13,13,26,0.7) 100%
-    );
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 60%;
+    background: linear-gradient(to top, rgba(10,10,20,0.95) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 1;
 }
 
 .brand-block {
@@ -61,34 +61,56 @@ body {
     color: white;
 }
 
-.brand-logo {
-    width: 64px;
-    height: 64px;
-    border-radius: 16px;
-    overflow: hidden;
+/* AI orbit icon */
+.brand-icon {
+    width: 56px;
+    height: 56px;
     margin-bottom: 1.25rem;
-    border: 2px solid rgba(255,255,255,0.25);
+    animation: spin-slow 12s linear infinite;
 }
 
-.brand-logo img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+@keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
 }
 
 .brand-name {
     font-family: 'Syne', sans-serif;
-    font-size: 2.25rem;
+    font-size: 2.5rem;
     font-weight: 800;
     letter-spacing: -0.03em;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.6rem;
+    background: linear-gradient(90deg, #ffffff 0%, #f74781 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .brand-tagline {
     font-size: 1rem;
     font-weight: 300;
     line-height: 1.7;
-    opacity: 0.75;
+    opacity: 0.6;
+    margin-bottom: 1.75rem;
+}
+
+/* AI feature pill tags */
+.ai-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.ai-tags span {
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(247,71,129,0.4);
+    color: rgba(247,71,129,0.9);
+    background: rgba(247,71,129,0.08);
 }
 
 /* ── RIGHT: login panel ── */
@@ -172,9 +194,7 @@ body {
     outline: none;
 }
 
-.field-group input::placeholder {
-    color: #c4c9d4;
-}
+.field-group input::placeholder { color: #c4c9d4; }
 
 .field-group input:focus {
     border-color: var(--pink);
@@ -197,32 +217,13 @@ body {
     transition: background 0.2s, transform 0.1s;
 }
 
-.btn-login:hover {
-    background: var(--pink-dark);
-}
-
-.btn-login:active {
-    transform: scale(0.98);
-}
+.btn-login:hover  { background: var(--pink-dark); }
+.btn-login:active { transform: scale(0.98); }
 
 /* ── Responsive ── */
 @media (max-width: 768px) {
-    body {
-        flex-direction: column;
-        overflow: auto;
-    }
-
-    .bg-visual {
-        flex: none;
-        height: 260px;
-        padding: 2rem 1.5rem;
-    }
-
+    body { flex-direction: column; overflow: auto; }
+    .bg-visual { flex: none; height: 280px; padding: 2rem 1.5rem; }
     .brand-name { font-size: 1.75rem; }
-
-    .login-panel {
-        width: 100%;
-        min-width: unset;
-        padding: 2.5rem 1.5rem 3rem;
-    }
+    .login-panel { width: 100%; min-width: unset; padding: 2.5rem 1.5rem 3rem; }
 }

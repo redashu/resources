@@ -10,16 +10,30 @@
 <body>
 
     <div class="bg-visual">
-        <div class="bg-img">
-            <img src="{{ url_for('static', filename='mm4ka3.jpeg') }}" alt="">
-        </div>
-        <div class="bg-overlay"></div>
+        <!-- AI-themed animated SVG background — no image file needed -->
+        <canvas id="ai-canvas"></canvas>
         <div class="brand-block">
-            <div class="brand-logo">
-                <img src="{{ url_for('static', filename='mm4ka2.jpg') }}" alt="ChatApp logo">
+            <div class="brand-icon">
+                <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="24" cy="24" r="22" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                    <circle cx="24" cy="24" r="10" fill="rgba(247,71,129,0.9)"/>
+                    <line x1="24" y1="2" x2="24" y2="10" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+                    <line x1="24" y1="38" x2="24" y2="46" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+                    <line x1="2" y1="24" x2="10" y2="24" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+                    <line x1="38" y1="24" x2="46" y2="24" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+                    <line x1="7" y1="7" x2="13" y2="13" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" stroke-linecap="round"/>
+                    <line x1="35" y1="35" x2="41" y2="41" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" stroke-linecap="round"/>
+                    <line x1="41" y1="7" x2="35" y2="13" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" stroke-linecap="round"/>
+                    <line x1="7" y1="41" x2="13" y2="35" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
             </div>
             <h1 class="brand-name">ChatApp</h1>
-            <p class="brand-tagline">Your voice. Your words.<br>Your conversations.</p>
+            <p class="brand-tagline">Powered by AI.<br>Built for you.</p>
+            <div class="ai-tags">
+                <span>GPT-4o</span>
+                <span>Voice Input</span>
+                <span>Multi-turn</span>
+            </div>
         </div>
     </div>
 
@@ -48,5 +62,78 @@
         </div>
     </div>
 
+<script>
+// Neural network animated background
+const canvas = document.getElementById('ai-canvas');
+const ctx = canvas.getContext('2d');
+let W, H, nodes = [], animId;
+
+function resize() {
+    W = canvas.width  = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+}
+
+function Node() {
+    this.x  = Math.random() * W;
+    this.y  = Math.random() * H;
+    this.vx = (Math.random() - 0.5) * 0.4;
+    this.vy = (Math.random() - 0.5) * 0.4;
+    this.r  = Math.random() * 2.5 + 1;
+    this.pulse = Math.random() * Math.PI * 2;
+}
+
+function init() {
+    resize();
+    nodes = [];
+    const count = Math.floor((W * H) / 9000);
+    for (let i = 0; i < count; i++) nodes.push(new Node());
+}
+
+function draw() {
+    ctx.clearRect(0, 0, W, H);
+    const t = Date.now() * 0.001;
+
+    // Draw connections
+    for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+            const dx = nodes[i].x - nodes[j].x;
+            const dy = nodes[i].y - nodes[j].y;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            const maxDist = 140;
+            if (dist < maxDist) {
+                const alpha = (1 - dist / maxDist) * 0.35;
+                ctx.beginPath();
+                ctx.strokeStyle = `rgba(247,71,129,${alpha})`;
+                ctx.lineWidth = 0.8;
+                ctx.moveTo(nodes[i].x, nodes[i].y);
+                ctx.lineTo(nodes[j].x, nodes[j].y);
+                ctx.stroke();
+            }
+        }
+    }
+
+    // Draw nodes
+    nodes.forEach(n => {
+        n.pulse += 0.02;
+        const glow = Math.sin(n.pulse) * 0.3 + 0.7;
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, n.r * glow, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(247,71,129,${0.5 * glow})`;
+        ctx.fill();
+
+        // Move
+        n.x += n.vx;
+        n.y += n.vy;
+        if (n.x < 0 || n.x > W) n.vx *= -1;
+        if (n.y < 0 || n.y > H) n.vy *= -1;
+    });
+
+    animId = requestAnimationFrame(draw);
+}
+
+window.addEventListener('resize', () => { cancelAnimationFrame(animId); init(); draw(); });
+init();
+draw();
+</script>
 </body>
 </html>

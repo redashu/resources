@@ -9,31 +9,54 @@
 </head>
 <body>
 
-    <div class="page">
+<div class="page">
 
-        <!-- Top navbar -->
-        <nav class="navbar">
-            <span class="nav-brand">ChatApp</span>
-            <form action="{{ url_for('logout') }}" method="POST">
-                <button type="submit" class="btn-logout">Sign out</button>
-            </form>
-        </nav>
+    <nav class="navbar">
+        <span class="nav-brand">ChatApp</span>
+        <form action="{{ url_for('logout') }}" method="POST">
+            <button type="submit" class="btn-logout">Sign out</button>
+        </form>
+    </nav>
 
-        <!-- Hero search area -->
-        <main class="hero">
-            <h1 class="hero-title">What's on<br>your mind?</h1>
-            <p class="hero-sub">Speak or type your question below</p>
+    <div class="chat-area" id="chat_area">
+        {% if history %}
+            {% for msg in history %}
+                {% if msg.role == 'user' %}
+                <div class="bubble bubble-user">
+                    <span class="bubble-label">You</span>
+                    <p>{{ msg.content }}</p>
+                </div>
+                {% else %}
+                <div class="bubble bubble-ai">
+                    <span class="bubble-label">AI</span>
+                    <div class="prose">{{ msg.html | safe }}</div>
+                </div>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+        <div class="empty-state">
+            <p>Ask me anything — I'm here to help ✦</p>
+        </div>
+        {% endif %}
 
-            <form action="/home" method="POST" class="search-form">
-                <div class="search-bar">
-                    <input
-                        class="search-input"
-                        id="user_input"
-                        name="user_input"
-                        type="search"
-                        placeholder="Ask me anything…"
-                        autocomplete="off"
-                    >
+        {% if error %}
+        <div class="error-banner">{{ error }}</div>
+        {% endif %}
+    </div>
+
+    <div class="input-dock">
+        <form action="/home" method="POST" class="input-form" id="chat-form">
+            <div class="search-bar">
+                <textarea
+                    class="search-input"
+                    id="user_input"
+                    name="user_input"
+                    placeholder="Type a message… (Shift+Enter for new line)"
+                    autocomplete="off"
+                    rows="1"
+                    required
+                ></textarea>
+                <div class="input-actions">
                     <button
                         type="button"
                         class="mic-btn"
@@ -44,54 +67,55 @@
                     >
                         <img src="{{ url_for('static', filename='m.jpg') }}" alt="Mic">
                     </button>
+                    <button type="submit" class="btn-submit">Send →</button>
                 </div>
-                <button type="submit" class="btn-submit">Search →</button>
-            </form>
-
-            <!-- Output area -->
-            {% if user_input %}
-            <div class="result-card">
-                <span class="result-label">You asked</span>
-                <p class="result-text">{{ user_input }}</p>
             </div>
-            {% endif %}
-        </main>
-
+        </form>
     </div>
 
-    <script>
-        function startRecorder() {
-            const btn = document.getElementById('mic_btn');
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+</div>
 
-            if (!SpeechRecognition) {
-                alert('Speech recognition is not supported in this browser. Try Chrome.');
-                return;
+<script>
+    // Auto-scroll chat to bottom
+    const chatArea = document.getElementById('chat_area');
+    if (chatArea) chatArea.scrollTop = chatArea.scrollHeight;
+
+    // Auto-grow textarea
+    const textarea = document.getElementById('user_input');
+
+    function autoGrow() {
+        textarea.style.height = 'auto';
+        textarea.style.height = Math.min(textarea.scrollHeight, 180) + 'px';
+    }
+
+    textarea.addEventListener('input', autoGrow);
+
+    // Enter = submit, Shift+Enter = new line
+    textarea.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            if (textarea.value.trim()) {
+                document.getElementById('chat-form').submit();
             }
-
-            const rec = new SpeechRecognition();
-            rec.lang = 'en-GB';
-            rec.interimResults = false;
-
-            btn.classList.add('recording');
-            btn.setAttribute('aria-label', 'Recording...');
-
-            rec.onresult = function(event) {
-                document.getElementById('user_input').value = event.results[0][0].transcript;
-                btn.classList.remove('recording');
-                btn.setAttribute('aria-label', 'Start voice input');
-            };
-
-            rec.onerror = function() {
-                btn.classList.remove('recording');
-            };
-
-            rec.onend = function() {
-                btn.classList.remove('recording');
-            };
-
-            rec.start();
         }
-    </script>
+    });
+
+    // Voice recorder
+    function startRecorder() {
+        const btn = document.getElementById('mic_btn');
+        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SR) { alert('Speech recognition not supported. Use Chrome.'); return; }
+        const rec = new SR();
+        rec.lang = 'en-GB';
+        btn.classList.add('recording');
+        rec.onresult = e => {
+            textarea.value = e.results[0][0].transcript;
+            autoGrow();
+            btn.classList.remove('recording');
+        };
+        rec.onerror = rec.onend = () => btn.classList.remove('recording');
+        rec.start();
+    }
+</script>
 </body>
 </html>
