@@ -1,48 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Page</title>
+    <title>ChatApp — Home</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
 </head>
-
 <body>
-    <form action="/home" method="POST">
-        <div class="a">
-            <div class="b">
-                <input class="c" id="user_input" name="user_input" rows="5" type="search" placeholder="Search">
-                <div class="d" id="user_input" name="user_input" rows="5" onclick="Recorder()"><img src="{{ url_for('static', filename='m.jpg') }}" alt="Mic Icon">
-                </div>
-            </div>
-            <button type="submit">Submit</button>
-            <div>
-                
-                <div class="output">
-                    <strong>You submitted:</strong>
-                    <p>{{ user_input }}</p>
-                </div>
-              
-            </div>
-    </form>
 
-    <br>
-    <!-- Logout Button -->
-    <form action="{{ url_for('logout') }}" method="POST">
-        <button type="submit">Logout</button>
-    </form>
-    
+    <div class="page">
+
+        <!-- Top navbar -->
+        <nav class="navbar">
+            <span class="nav-brand">ChatApp</span>
+            <form action="{{ url_for('logout') }}" method="POST">
+                <button type="submit" class="btn-logout">Sign out</button>
+            </form>
+        </nav>
+
+        <!-- Hero search area -->
+        <main class="hero">
+            <h1 class="hero-title">What's on<br>your mind?</h1>
+            <p class="hero-sub">Speak or type your question below</p>
+
+            <form action="/home" method="POST" class="search-form">
+                <div class="search-bar">
+                    <input
+                        class="search-input"
+                        id="user_input"
+                        name="user_input"
+                        type="search"
+                        placeholder="Ask me anything…"
+                        autocomplete="off"
+                    >
+                    <button
+                        type="button"
+                        class="mic-btn"
+                        id="mic_btn"
+                        onclick="startRecorder()"
+                        title="Voice input"
+                        aria-label="Start voice input"
+                    >
+                        <img src="{{ url_for('static', filename='m.jpg') }}" alt="Mic">
+                    </button>
+                </div>
+                <button type="submit" class="btn-submit">Search →</button>
+            </form>
+
+            <!-- Output area -->
+            {% if user_input %}
+            <div class="result-card">
+                <span class="result-label">You asked</span>
+                <p class="result-text">{{ user_input }}</p>
+            </div>
+            {% endif %}
+        </main>
+
+    </div>
+
     <script>
-        function Recorder() {
-            let a = new webkitSpeechRecognition();
-            a.lang = "en-GB";
-            a.onresult = function (event) {
-                document.getElementById('user_input').value = event.results[0][0].transcript;
+        function startRecorder() {
+            const btn = document.getElementById('mic_btn');
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+            if (!SpeechRecognition) {
+                alert('Speech recognition is not supported in this browser. Try Chrome.');
+                return;
             }
-            a.start();
+
+            const rec = new SpeechRecognition();
+            rec.lang = 'en-GB';
+            rec.interimResults = false;
+
+            btn.classList.add('recording');
+            btn.setAttribute('aria-label', 'Recording...');
+
+            rec.onresult = function(event) {
+                document.getElementById('user_input').value = event.results[0][0].transcript;
+                btn.classList.remove('recording');
+                btn.setAttribute('aria-label', 'Start voice input');
+            };
+
+            rec.onerror = function() {
+                btn.classList.remove('recording');
+            };
+
+            rec.onend = function() {
+                btn.classList.remove('recording');
+            };
+
+            rec.start();
         }
     </script>
 </body>
-
 </html>

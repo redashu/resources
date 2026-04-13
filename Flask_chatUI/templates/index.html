@@ -1,39 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
+    <title>ChatApp — Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-
 <body>
-    {% if error %}
-    <p style="color: red;">{{ error }}</p>
-    {% endif %}
-    <img src="{{ url_for('static', filename='mm4ka3.jpeg') }}" alt="Mic Icon" height="645px" width="1290px">
-    <div class="a"><img src="{{ url_for('static', filename='mm4ka2.jpg') }}" alt="Mic Icon" height="540px" width="595px"></div>
-    <div class="b"></div>
-    <div class="c"></div>
-    <div class="d"></div>
-    <p class="e">ChatApp</p>
-    <div class="j">Welcome Page</div>
-    <div class="k">Sign in to <br>continue access</div>
 
-    <form action="/" method="POST">
-        <div class="form-title">Log In</div>
-        <div class="input-group">
-            <label for="username">UserName</label>
-            <input id="username" type="input" name="username" placeholder="Enter your name">
+    <div class="bg-visual">
+        <div class="bg-img">
+            <img src="{{ url_for('static', filename='mm4ka3.jpeg') }}" alt="">
         </div>
-        
-        <div class="input-group">
-            <label for="password">Password</label>
-            <input id="password" type="password" name="password" placeholder="Enter your password">
+        <div class="bg-overlay"></div>
+        <div class="brand-block">
+            <div class="brand-logo">
+                <img src="{{ url_for('static', filename='mm4ka2.jpg') }}" alt="ChatApp logo">
+            </div>
+            <h1 class="brand-name">ChatApp</h1>
+            <p class="brand-tagline">Your voice. Your words.<br>Your conversations.</p>
         </div>
-        <button type="submit" id="submit" class="continue-btn">CONTINUE</button>
-    </form>
+    </div>
+
+    <div class="login-panel">
+        <div class="login-inner">
+            <div class="login-header">
+                <span class="login-label">Welcome back</span>
+                <h2 class="login-title">Sign in to<br>continue</h2>
+            </div>
+
+            {% if error %}
+            <div class="error-msg">{{ error }}</div>
+            {% endif %}
+
+            <form action="/" method="POST" class="login-form">
+                <div class="field-group">
+                    <label for="username">Username</label>
+                    <input id="username" type="text" name="username" placeholder="Enter your username" autocomplete="username">
+                </div>
+                <div class="field-group">
+                    <label for="password">Password</label>
+                    <input id="password" type="password" name="password" placeholder="Enter your password" autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn-login">Continue →</button>
+            </form>
+        </div>
+    </div>
+
 </body>
-
 </html>
